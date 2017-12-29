@@ -1,16 +1,27 @@
+import com.sun.glass.events.KeyEvent;
+
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.undo.UndoManager;
+import java.awt.*;
 
 public class TextEditorGUI extends JFrame{
-    private JTextArea textArea;
+    protected UndoManager undo = new UndoManager();
+    protected String fileName = "Untitled";
 
     public TextEditorGUI(){
-        textArea = new JTextArea(50, 50);
+        setTitle(fileName);
+        JTextPane textArea = new JTextPane();
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        JScrollPane scroll = new JScrollPane(textArea);
+        scroll.setPreferredSize(new Dimension(200, 200));
+        getContentPane().add(scroll);
         setJMenuBar(createMenuBar());
-        getContentPane().add(textArea);
-
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        pack();
+        setVisible(true);
     }
 
     private JMenuBar createMenuBar(){
@@ -22,8 +33,10 @@ public class TextEditorGUI extends JFrame{
 
     private JMenu createFileMenu(){
         JMenu file = new JMenu("File");
+        file.setMnemonic(KeyEvent.VK_ALT);
         JMenuItem save = new JMenuItem("Save");
         JMenuItem open = new JMenuItem("Open");
+        JMenuItem quit = new JMenuItem("Quit");
         file.add(save);
         file.add(open);
         return file;
@@ -31,24 +44,24 @@ public class TextEditorGUI extends JFrame{
 
     private JMenu createEditMenu(){
         JMenu edit = new JMenu("Edit");
+        Action cut = new DefaultEditorKit.CutAction();
+        cut.putValue(Action.NAME, "Cut");
+        edit.add(cut);
+        Action copy = new DefaultEditorKit.CopyAction();
+        copy.putValue(Action.NAME, "Copy");
+        edit.add(copy);
+        Action paste = new DefaultEditorKit.PasteAction();
+        paste.putValue(Action.NAME, "Paste");
+        edit.add(paste);
+        JMenu font = new JMenu("Font");
+        Action bold = new StyledEditorKit.BoldAction();
+        bold.putValue(Action.NAME, "Bold");
+        font.add(bold);
+        edit.add(font);
         return edit;
     }
 
-    public static void createGUI(){
-        TextEditorGUI frame = new TextEditorGUI();
-        frame.pack();
-        frame.setVisible(true);
-    }
-
     public static void main(String[] args) {
-        //Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                //Turn off metal's use of bold fonts
-                UIManager.put("swing.boldMetal", Boolean.FALSE);
-                createGUI();
-            }
-        });
+        new TextEditorGUI();
     }
 }

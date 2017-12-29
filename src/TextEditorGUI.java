@@ -1,21 +1,24 @@
 import com.sun.glass.events.KeyEvent;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.StyledEditorKit;
-import javax.swing.undo.UndoManager;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 public class TextEditorGUI extends JFrame{
-    protected UndoManager undo = new UndoManager();
     protected String fileName = "Untitled";
+    private JFileChooser fc = new JFileChooser();
 
     public TextEditorGUI(){
         setTitle(fileName);
         JTextPane textArea = new JTextPane();
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        textArea.setFont(new Font("Monospaced", Font.PLAIN, 20));
         JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setPreferredSize(new Dimension(200, 200));
+        scroll.setPreferredSize(new Dimension(500, 500));
         getContentPane().add(scroll);
         setJMenuBar(createMenuBar());
 
@@ -34,11 +37,41 @@ public class TextEditorGUI extends JFrame{
     private JMenu createFileMenu(){
         JMenu file = new JMenu("File");
         file.setMnemonic(KeyEvent.VK_ALT);
+
+
         JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (fc.showSaveDialog(file) == JFileChooser.APPROVE_OPTION) {
+
+
+                }
+            }
+        });
+        save.setMnemonic(KeyEvent.VK_S);
+        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+
         JMenuItem open = new JMenuItem("Open");
+        open.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt", "text");
+                fc.setFileFilter(textFilter);
+                File selectedfile = null;
+                if (fc.showOpenDialog(file)==JFileChooser.APPROVE_OPTION) {
+                    selectedfile = fc.getSelectedFile();
+
+                }
+
+            }
+        });
+        open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+
         JMenuItem quit = new JMenuItem("Quit");
         file.add(save);
         file.add(open);
+        file.add(quit);
         return file;
     }
 
@@ -63,5 +96,16 @@ public class TextEditorGUI extends JFrame{
 
     public static void main(String[] args) {
         new TextEditorGUI();
+    }
+
+    private class OpenL implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser chooser = new JFileChooser();
+            File file = null;
+            if (chooser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION)
+                file = chooser.getSelectedFile();
+        }
     }
 }

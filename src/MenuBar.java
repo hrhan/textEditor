@@ -6,14 +6,19 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.StyledEditorKit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class MenuBar extends JMenuBar {
     private JFileChooser fc = new JFileChooser();
+    private TextEditorGUI teGUI;
 
-    public MenuBar(){
+    public MenuBar(TextEditorGUI teGUI){
         add(createFileMenu());
         add(createEditMenu());
+        this.teGUI = teGUI;
     }
 
     private JMenu createFileMenu(){
@@ -32,6 +37,7 @@ public class MenuBar extends JMenuBar {
                 }
             }
         });
+
         save.setMnemonic(KeyEvent.VK_S);
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
@@ -39,10 +45,10 @@ public class MenuBar extends JMenuBar {
         open.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                File selectedfile = null;
+                File selectedFile = null;
                 if (fc.showOpenDialog(file)==JFileChooser.APPROVE_OPTION) {
-                    selectedfile = fc.getSelectedFile();
-
+                    selectedFile = fc.getSelectedFile();
+                    readFile(selectedFile);
                 }
 
             }
@@ -54,6 +60,19 @@ public class MenuBar extends JMenuBar {
         file.add(open);
         file.add(quit);
         return file;
+    }
+
+    public void readFile(File file){
+        BufferedReader input = null;
+        try{
+            input = new BufferedReader(new FileReader(file));
+            teGUI.getTextArea().read(input, null);
+            input.close();
+        }
+        catch(IOException ioe){
+
+        }
+
     }
 
     private JMenu createEditMenu(){

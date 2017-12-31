@@ -58,6 +58,18 @@ public class MenuBar extends JMenuBar {
         quit.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
+                String[] options = {"Yes", "No", "Cancel"};
+                if (teGUI.getChanged()){
+                    int response = JOptionPane.showOptionDialog(fileMenu, "Would you like to save the current file?",
+                            "Save?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            options, options[2]);
+                    if(response == 0){
+                        if(fc.showSaveDialog(fileMenu)==JFileChooser.APPROVE_OPTION)
+                            saveFile(fc.getSelectedFile());
+                    }
+                    if(response==2)
+                        return;
+                }
                 teGUI.dispose();
             }
         });
@@ -68,10 +80,13 @@ public class MenuBar extends JMenuBar {
         return fileMenu;
     }
 
+    // Somehow get the save? message when quit menu is selected right after opening a file. Needs to be fixed.
     private void readFile(File file){
         try(BufferedReader input = new BufferedReader(new FileReader(file))){
             teGUI.getTextPane().read(input, null);
+            teGUI.addNewDocumentListener();
             teGUI.setFileName(file.getName());
+            teGUI.setChanged(false);
         }
         catch(IOException ioe){
             JOptionPane.showMessageDialog(this.fileMenu, "Unable to find " + file.getName());
@@ -86,10 +101,11 @@ public class MenuBar extends JMenuBar {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
             teGUI.getTextPane().write(writer);
-            teGUI.setFileName(fileName);
+            teGUI.setFileName(thisFile.getName());
+            teGUI.setChanged(false);
         }
         catch(IOException ioe){
-            JOptionPane.showMessageDialog(this.fileMenu, "Unable to save");
+            JOptionPane.showMessageDialog(this.fileMenu, "Unable to save the file");
         }
     }
 

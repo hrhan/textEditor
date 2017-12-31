@@ -51,16 +51,18 @@ public class MenuBar extends JMenuBar {
                 }
             }
         });
+        open.setMnemonic(KeyEvent.VK_O);
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 
         JMenuItem quit = new JMenuItem("Quit");
+
         fileMenu.add(save);
         fileMenu.add(open);
         fileMenu.add(quit);
         return fileMenu;
     }
 
-    public void readFile(File file){
+    private void readFile(File file){
         try(BufferedReader input = new BufferedReader(new FileReader(file))){
             teGUI.getTextPane().read(input, null);
             teGUI.setFileName(file.getName());
@@ -70,9 +72,15 @@ public class MenuBar extends JMenuBar {
         }
     }
 
-    public void saveFile(File thisFile){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(thisFile + ".txt"))){
-            writer.write(teGUI.getTextPane().getText());
+    private void saveFile(File thisFile){
+        String fileName = thisFile.getAbsolutePath();
+        if (!fileName.endsWith(".txt")){
+            fileName += ".txt";
+        }
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
+            teGUI.getTextPane().write(writer);
+            teGUI.setFileName(fileName);
         }
         catch(IOException ioe){
             JOptionPane.showMessageDialog(this.fileMenu, "Unable to save");

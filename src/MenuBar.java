@@ -6,24 +6,25 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.StyledEditorKit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class MenuBar extends JMenuBar {
-    private JFileChooser fc = new JFileChooser();
     private TextEditorGUI teGUI;
+    private JFileChooser fc;
+
+    private JMenu fileMenu;
+    private JMenu editMenu;
 
     public MenuBar(TextEditorGUI teGUI){
-        add(createFileMenu());
-        add(createEditMenu());
         this.teGUI = teGUI;
+        this.fc = new JFileChooser();
+        this.add(createFileMenu());
+        this.add(createEditMenu());
     }
 
     private JMenu createFileMenu(){
-        JMenu file = new JMenu("File");
-        file.setMnemonic(KeyEvent.VK_ALT);
+        fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_ALT);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt");
         fc.setFileFilter(textFilter);
 
@@ -31,13 +32,11 @@ public class MenuBar extends JMenuBar {
         save.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (fc.showSaveDialog(file) == JFileChooser.APPROVE_OPTION) {
-
-
+                if (fc.showSaveDialog(fileMenu) == JFileChooser.APPROVE_OPTION) {
+                    saveFile(fc.getSelectedFile());
                 }
             }
         });
-
         save.setMnemonic(KeyEvent.VK_S);
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
@@ -46,33 +45,38 @@ public class MenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e){
                 File selectedFile = null;
-                if (fc.showOpenDialog(file)==JFileChooser.APPROVE_OPTION) {
+                if (fc.showOpenDialog(fileMenu)==JFileChooser.APPROVE_OPTION) {
                     selectedFile = fc.getSelectedFile();
                     readFile(selectedFile);
                 }
-
             }
         });
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 
         JMenuItem quit = new JMenuItem("Quit");
-        file.add(save);
-        file.add(open);
-        file.add(quit);
-        return file;
+        fileMenu.add(save);
+        fileMenu.add(open);
+        fileMenu.add(quit);
+        return fileMenu;
     }
 
     public void readFile(File file){
-        BufferedReader input = null;
-        try{
-            input = new BufferedReader(new FileReader(file));
-            teGUI.getTextArea().read(input, null);
-            input.close();
+        try(BufferedReader input = new BufferedReader(new FileReader(file))){
+            teGUI.getTextPane().read(input, null);
+            teGUI.setFileName(file.getName());
         }
         catch(IOException ioe){
-
+            JOptionPane.showMessageDialog(this.fileMenu, "Unable to find " + file.getName());
         }
+    }
 
+    public void saveFile(File thisFile){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(thisFile + ".txt"))){
+            writer.write(teGUI.getTextPane().getText());
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(this.fileMenu, "Unable to save");
+        }
     }
 
     private JMenu createEditMenu(){

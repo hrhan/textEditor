@@ -28,18 +28,44 @@ public class MenuBar extends JMenuBar {
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt");
         fc.setFileFilter(textFilter);
 
+
+
+
+        fileMenu.add(saveMenu());
+        fileMenu.add(saveAsMenu());
+        fileMenu.add(openMenu());
+        fileMenu.add(quitMenu());
+        return fileMenu;
+    }
+
+    private JMenuItem saveMenu(){
         JMenuItem save = new JMenuItem("Save");
         save.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (fc.showSaveDialog(fileMenu) == JFileChooser.APPROVE_OPTION) {
+                if (teGUI.getFileName().equals("Untitled"))
+                    saveFileAs();
+                else
                     saveFile(fc.getSelectedFile());
-                }
             }
         });
         save.setMnemonic(KeyEvent.VK_S);
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+        return save;
+    }
 
+    private JMenuItem saveAsMenu(){
+        JMenuItem saveAs = new JMenuItem("Save As");
+        saveAs.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                saveFileAs();
+            }
+        });
+        return saveAs;
+    }
+
+    private JMenuItem openMenu(){
         JMenuItem open = new JMenuItem("Open");
         open.addActionListener(new ActionListener(){
             @Override
@@ -53,7 +79,10 @@ public class MenuBar extends JMenuBar {
         });
         open.setMnemonic(KeyEvent.VK_O);
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        return open;
+    }
 
+    private JMenuItem quitMenu(){
         JMenuItem quit = new JMenuItem("Quit");
         quit.addActionListener(new ActionListener(){
             @Override
@@ -64,8 +93,7 @@ public class MenuBar extends JMenuBar {
                             "Save?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                             options, options[2]);
                     if(response == 0){
-                        if(fc.showSaveDialog(fileMenu)==JFileChooser.APPROVE_OPTION)
-                            saveFile(fc.getSelectedFile());
+                        saveFileAs();
                     }
                     if(response==2)
                         return;
@@ -73,11 +101,9 @@ public class MenuBar extends JMenuBar {
                 teGUI.dispose();
             }
         });
-
-        fileMenu.add(save);
-        fileMenu.add(open);
-        fileMenu.add(quit);
-        return fileMenu;
+        quit.setMnemonic(KeyEvent.VK_Q);
+        quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+        return quit;
     }
 
     // Somehow get the save? message when quit menu is selected right after opening a file. Needs to be fixed.
@@ -107,6 +133,11 @@ public class MenuBar extends JMenuBar {
         catch(IOException ioe){
             JOptionPane.showMessageDialog(this.fileMenu, "Unable to save the file");
         }
+    }
+
+    private void saveFileAs(){
+        if(fc.showSaveDialog(fileMenu) == JFileChooser.APPROVE_OPTION)
+            saveFile(fc.getSelectedFile());
     }
 
     private JMenu createEditMenu(){

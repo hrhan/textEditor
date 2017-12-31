@@ -30,6 +30,10 @@ public class TextEditorGUI extends JFrame{
         return this.textPane;
     }
 
+    public String getFileName(){
+        return this.fileName;
+    }
+
     public void setFileName(String fileName){
         this.fileName = fileName;
         setTitle(this.fileName);

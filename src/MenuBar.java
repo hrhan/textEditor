@@ -55,6 +55,12 @@ public class MenuBar extends JMenuBar {
         open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 
         JMenuItem quit = new JMenuItem("Quit");
+        quit.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                teGUI.dispose();
+            }
+        });
 
         fileMenu.add(save);
         fileMenu.add(open);

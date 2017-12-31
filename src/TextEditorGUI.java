@@ -14,7 +14,7 @@ public class TextEditorGUI extends JFrame{
         getContentPane().add(scroll);
         setJMenuBar(new MenuBar(this));
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
         setVisible(true);
     }

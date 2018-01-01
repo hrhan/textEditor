@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -13,8 +14,11 @@ public class ToolBar extends JToolBar {
         createFontsMenu();
         addSeparator();
         createFontSizeMenu();
+        addSeparator();
+        createFontStyleMenu();
     }
 
+    // somehow fontList.setSelectedItem() is not working.
     private void createFontsMenu(){
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         JComboBox fontList = new JComboBox(fonts);
@@ -35,7 +39,7 @@ public class ToolBar extends JToolBar {
 
     // Find out why editor.getTextPane().setFont(currentFont.deriveFont()) is not working as it should
     private void createFontSizeMenu(){
-        SpinnerModel fontSize = new SpinnerNumberModel(12, 0, 50, 1);
+        SpinnerModel fontSize = new SpinnerNumberModel(15, 0, 50, 1);
         JSpinner fontSizeSpinner = new JSpinner(fontSize);
         fontSizeSpinner.addChangeListener(new ChangeListener() {
             @Override
@@ -49,7 +53,17 @@ public class ToolBar extends JToolBar {
     }
 
     private void createFontStyleMenu(){
-        
+        Action bold = new StyledEditorKit.BoldAction();
+        bold.putValue(Action.NAME, "Bold");
+        add(bold);
+
+        Action italic = new StyledEditorKit.ItalicAction();
+        italic.putValue(Action.NAME, "Italic");
+        add(italic);
+
+        Action underline = new StyledEditorKit.UnderlineAction();
+        underline.putValue(Action.NAME, "Underline");
+        add(underline);
     }
 
     private class FontListRenderer extends DefaultListCellRenderer{

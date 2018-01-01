@@ -15,7 +15,7 @@ public class TextEditorGUI extends JFrame{
 
     public TextEditorGUI(){
         setTitle(this.fileName);
-        textPane.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        textPane.setFont(new Font("Arial", Font.PLAIN, 15));
         JScrollPane scroll = new JScrollPane(textPane);
         scroll.setPreferredSize(new Dimension(500, 500));
         getContentPane().add(scroll);

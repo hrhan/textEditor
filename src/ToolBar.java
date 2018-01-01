@@ -21,7 +21,7 @@ public class ToolBar extends JToolBar {
     // somehow fontList.setSelectedItem() is not working.
     private void createFontsMenu(){
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-        JComboBox fontList = new JComboBox(fonts);
+        JComboBox<Font> fontList = new JComboBox<>(fonts);
         fontList.setRenderer(new FontListRenderer());
         fontList.addItemListener(new ItemListener() {
             @Override
@@ -70,10 +70,15 @@ public class ToolBar extends JToolBar {
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                                                       int index, boolean isSelected, boolean cellHasFocus){
+            String fontName = "";
             if (value instanceof Font){
-                value = ((Font) value).getName();
+                fontName = ((Font)value).getName();
+                value = fontName;
             }
-            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            Font labelFont = new Font(fontName, Font.PLAIN, 20);
+            JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            label.setFont(labelFont);
+            return label;
         }
     }
 

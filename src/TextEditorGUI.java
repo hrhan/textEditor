@@ -26,7 +26,7 @@ public class TextEditorGUI extends JFrame{
         WindowListener exitListner = new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                menuBar.getMenu(0).getItem(3).doClick();
+                menuBar.getMenu(0).getItem(4).doClick();
             }
         };
         addWindowListener(exitListner);

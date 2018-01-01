@@ -3,7 +3,6 @@ import com.sun.glass.events.KeyEvent;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.StyledEditorKit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -28,11 +27,26 @@ public class MenuBar extends JMenuBar {
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt");
         fc.setFileFilter(textFilter);
 
+        fileMenu.add(newMenu());
         fileMenu.add(saveMenu());
         fileMenu.add(saveAsMenu());
         fileMenu.add(openMenu());
         fileMenu.add(quitMenu());
+
         return fileMenu;
+    }
+
+    private JMenuItem newMenu(){
+        JMenuItem newWindow = new JMenuItem("New");
+        newWindow.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new TextEditorGUI();
+            }
+        });
+        newWindow.setMnemonic(KeyEvent.VK_N);
+        newWindow.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+        return newWindow;
     }
 
     private JMenuItem saveMenu(){
@@ -149,11 +163,6 @@ public class MenuBar extends JMenuBar {
         Action paste = new DefaultEditorKit.PasteAction();
         paste.putValue(Action.NAME, "Paste");
         edit.add(paste);
-        JMenu font = new JMenu("Font");
-        Action bold = new StyledEditorKit.BoldAction();
-        bold.putValue(Action.NAME, "Bold");
-        font.add(bold);
-        edit.add(font);
         return edit;
     }
 }

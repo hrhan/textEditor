@@ -1,10 +1,10 @@
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 
 public class ToolBar extends JToolBar {
     private TextEditorGUI editor;
@@ -12,10 +12,11 @@ public class ToolBar extends JToolBar {
     public ToolBar(TextEditorGUI editor){
         this.editor = editor;
         createFontsMenu();
-        addSeparator();
         createFontSizeMenu();
         addSeparator();
         createFontStyleMenu();
+        addSeparator();
+        createAlignmentMenu();
     }
 
     // somehow fontList.setSelectedItem() is not working.
@@ -66,6 +67,17 @@ public class ToolBar extends JToolBar {
         add(underline);
     }
 
+    private void createAlignmentMenu(){
+        Action left = new StyledEditorKit.AlignmentAction("Left", StyleConstants.ALIGN_LEFT);
+        add(left);
+
+        Action center = new StyledEditorKit.AlignmentAction("Center", StyleConstants.ALIGN_CENTER);
+        add(center);
+
+        Action Right = new StyledEditorKit.AlignmentAction("Right", StyleConstants.ALIGN_RIGHT);
+        add(Right);
+    }
+
     private class FontListRenderer extends DefaultListCellRenderer{
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
@@ -81,5 +93,4 @@ public class ToolBar extends JToolBar {
             return label;
         }
     }
-
 }

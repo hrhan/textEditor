@@ -2,11 +2,16 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class TextEditorGUI extends JFrame{
     protected String fileName = "Untitled";
     private JTextPane textPane = new JTextPane();
     private boolean changed = false;
+    private JMenuBar menuBar = new MenuBar(this);
+    private JToolBar toolBar = new ToolBar(this);
 
     public TextEditorGUI(){
         setTitle(this.fileName);
@@ -14,10 +19,19 @@ public class TextEditorGUI extends JFrame{
         JScrollPane scroll = new JScrollPane(textPane);
         scroll.setPreferredSize(new Dimension(500, 500));
         getContentPane().add(scroll);
-        setJMenuBar(new MenuBar(this));
+        setJMenuBar(menuBar);
+        getContentPane().add(toolBar, BorderLayout.NORTH);
         addNewDocumentListener();
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        WindowListener exitListner = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                menuBar.getMenu(0).getItem(3).doClick();
+            }
+        };
+        addWindowListener(exitListner);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
         pack();
         setVisible(true);
     }

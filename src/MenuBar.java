@@ -9,14 +9,14 @@ import java.awt.event.ActionListener;
 import java.io.*;
 
 public class MenuBar extends JMenuBar {
-    private TextEditorGUI teGUI;
+    private TextEditorGUI editor;
     private JFileChooser fc;
 
     private JMenu fileMenu;
     private JMenu editMenu;
 
-    public MenuBar(TextEditorGUI teGUI){
-        this.teGUI = teGUI;
+    public MenuBar(TextEditorGUI editor){
+        this.editor = editor;
         this.fc = new JFileChooser();
         this.add(createFileMenu());
         this.add(createEditMenu());
@@ -27,9 +27,6 @@ public class MenuBar extends JMenuBar {
         fileMenu.setMnemonic(KeyEvent.VK_ALT);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt");
         fc.setFileFilter(textFilter);
-
-
-
 
         fileMenu.add(saveMenu());
         fileMenu.add(saveAsMenu());
@@ -43,7 +40,7 @@ public class MenuBar extends JMenuBar {
         save.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (teGUI.getFileName().equals("Untitled"))
+                if (editor.getFileName().equals("Untitled"))
                     saveFileAs();
                 else
                     saveFile(fc.getSelectedFile());
@@ -71,9 +68,10 @@ public class MenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e){
                 File selectedFile = null;
-                if (fc.showOpenDialog(fileMenu)==JFileChooser.APPROVE_OPTION) {
+                if (fc.showOpenDialog(editor)==JFileChooser.APPROVE_OPTION) {
                     selectedFile = fc.getSelectedFile();
                     readFile(selectedFile);
+                    editor.setChanged(false);
                 }
             }
         });
@@ -88,8 +86,8 @@ public class MenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e){
                 String[] options = {"Yes", "No", "Cancel"};
-                if (teGUI.getChanged()){
-                    int response = JOptionPane.showOptionDialog(fileMenu, "Would you like to save the current file?",
+                if (editor.getChanged()){
+                    int response = JOptionPane.showOptionDialog(editor, "Would you like to save the current file?",
                             "Save?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                             options, options[2]);
                     if(response == 0){
@@ -98,7 +96,7 @@ public class MenuBar extends JMenuBar {
                     if(response==2)
                         return;
                 }
-                teGUI.dispose();
+                editor.dispose();
             }
         });
         quit.setMnemonic(KeyEvent.VK_Q);
@@ -109,13 +107,13 @@ public class MenuBar extends JMenuBar {
     // Somehow get the save? message when quit menu is selected right after opening a file. Needs to be fixed.
     private void readFile(File file){
         try(BufferedReader input = new BufferedReader(new FileReader(file))){
-            teGUI.getTextPane().read(input, null);
-            teGUI.addNewDocumentListener();
-            teGUI.setFileName(file.getName());
-            teGUI.setChanged(false);
+            editor.getTextPane().read(input, null);
+            editor.addNewDocumentListener();
+            editor.setFileName(file.getName());
+            editor.setChanged(false);
         }
         catch(IOException ioe){
-            JOptionPane.showMessageDialog(this.fileMenu, "Unable to find " + file.getName());
+            JOptionPane.showMessageDialog(this.editor, "Unable to find " + file.getName());
         }
     }
 
@@ -126,17 +124,17 @@ public class MenuBar extends JMenuBar {
         }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
-            teGUI.getTextPane().write(writer);
-            teGUI.setFileName(thisFile.getName());
-            teGUI.setChanged(false);
+            editor.getTextPane().write(writer);
+            editor.setFileName(thisFile.getName());
+            editor.setChanged(false);
         }
         catch(IOException ioe){
-            JOptionPane.showMessageDialog(this.fileMenu, "Unable to save the file");
+            JOptionPane.showMessageDialog(this.editor, "Unable to save the file");
         }
     }
 
     private void saveFileAs(){
-        if(fc.showSaveDialog(fileMenu) == JFileChooser.APPROVE_OPTION)
+        if(fc.showSaveDialog(this.editor) == JFileChooser.APPROVE_OPTION)
             saveFile(fc.getSelectedFile());
     }
 

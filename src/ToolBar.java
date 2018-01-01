@@ -13,9 +13,7 @@ public class ToolBar extends JToolBar {
         this.editor = editor;
         createFontsMenu();
         createFontSizeMenu();
-        addSeparator();
         createFontStyleMenu();
-        addSeparator();
         createAlignmentMenu();
     }
 
@@ -56,26 +54,46 @@ public class ToolBar extends JToolBar {
     private void createFontStyleMenu(){
         Action bold = new StyledEditorKit.BoldAction();
         bold.putValue(Action.NAME, "Bold");
-        add(bold);
+        JButton boldButton = new JButton(bold);
 
         Action italic = new StyledEditorKit.ItalicAction();
         italic.putValue(Action.NAME, "Italic");
-        add(italic);
+        JButton italicButton = new JButton(italic);
 
         Action underline = new StyledEditorKit.UnderlineAction();
         underline.putValue(Action.NAME, "Underline");
-        add(underline);
+        JButton underlineButton = new JButton(underline);
+
+        JPanel stylePanel = new JPanel();
+        stylePanel.add(boldButton);
+        stylePanel.add(italicButton);
+        stylePanel.add(underlineButton);
+        stylePanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Font Style"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+        add(stylePanel);
+
     }
 
     private void createAlignmentMenu(){
         Action left = new StyledEditorKit.AlignmentAction("Left", StyleConstants.ALIGN_LEFT);
-        add(left);
+        JButton leftButton = new JButton(left);
 
         Action center = new StyledEditorKit.AlignmentAction("Center", StyleConstants.ALIGN_CENTER);
-        add(center);
+        JButton centerButton = new JButton(center);
 
-        Action Right = new StyledEditorKit.AlignmentAction("Right", StyleConstants.ALIGN_RIGHT);
-        add(Right);
+        Action right = new StyledEditorKit.AlignmentAction("Right", StyleConstants.ALIGN_RIGHT);
+        JButton rightButton = new JButton(right);
+
+
+        JPanel alignPanel = new JPanel();
+        alignPanel.add(leftButton);
+        alignPanel.add(centerButton);
+        alignPanel.add(rightButton);
+        alignPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Alignment"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+        add(alignPanel);
     }
 
     private class FontListRenderer extends DefaultListCellRenderer{

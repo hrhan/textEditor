@@ -15,7 +15,7 @@ public class TextEditorGUI extends JFrame{
 
     public TextEditorGUI(){
         setTitle(this.fileName);
-        textPane.setFont(new Font("Monospaced", Font.PLAIN, 20));
+        textPane.setFont(new Font("Monospaced", Font.PLAIN, 12));
         JScrollPane scroll = new JScrollPane(textPane);
         scroll.setPreferredSize(new Dimension(500, 500));
         getContentPane().add(scroll);
@@ -51,6 +51,10 @@ public class TextEditorGUI extends JFrame{
     public void setFileName(String fileName){
         this.fileName = fileName;
         setTitle(this.fileName);
+    }
+
+    public Font getFont(){
+        return this.textPane.getFont();
     }
 
     public boolean getChanged(){

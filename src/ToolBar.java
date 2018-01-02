@@ -11,14 +11,23 @@ public class ToolBar extends JToolBar {
 
     public ToolBar(TextEditorGUI editor){
         this.editor = editor;
-        createFontsMenu();
-        createFontSizeMenu();
+        createFontsPanel();
         createFontStyleMenu();
         createAlignmentMenu();
     }
 
+    private void createFontsPanel(){
+        JPanel fontPanel = new JPanel();
+        fontPanel.add(createFontsMenu());
+        fontPanel.add(createFontSizeMenu());
+        fontPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Font"),
+                BorderFactory.createEmptyBorder(0,0,0,0)));
+        add(fontPanel);
+    }
+
     // somehow fontList.setSelectedItem() is not working.
-    private void createFontsMenu(){
+    private JComboBox<Font> createFontsMenu(){
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         JComboBox<Font> fontList = new JComboBox<>(fonts);
         fontList.setRenderer(new FontListRenderer());
@@ -33,11 +42,11 @@ public class ToolBar extends JToolBar {
                 }
             }
         });
-        add(fontList);
+        return fontList;
     }
 
     // Find out why editor.getTextPane().setFont(currentFont.deriveFont()) is not working as it should
-    private void createFontSizeMenu(){
+    private JSpinner createFontSizeMenu(){
         SpinnerModel fontSize = new SpinnerNumberModel(15, 0, 50, 1);
         JSpinner fontSizeSpinner = new JSpinner(fontSize);
         fontSizeSpinner.addChangeListener(new ChangeListener() {
@@ -48,7 +57,7 @@ public class ToolBar extends JToolBar {
                         (int)fontSizeSpinner.getValue()));
             }
         });
-        add(fontSizeSpinner);
+        return fontSizeSpinner;
     }
 
     private void createFontStyleMenu(){

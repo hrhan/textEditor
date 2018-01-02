@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+// currently this text editor can only save as .rtf.
 public class TextEditorGUI extends JFrame{
     protected String fileName = "Untitled";
     private JTextPane textPane = new JTextPane();

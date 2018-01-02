@@ -25,7 +25,9 @@ public class MenuBar extends JMenuBar {
         fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_ALT);
         FileNameExtensionFilter textFilter = new FileNameExtensionFilter(".txt", "txt");
+        FileNameExtensionFilter rtfFilter = new FileNameExtensionFilter(".rtf", "rtf");
         fc.setFileFilter(textFilter);
+        fc.addChoosableFileFilter(rtfFilter);
 
         fileMenu.add(newMenu());
         fileMenu.add(saveMenu());
@@ -81,6 +83,16 @@ public class MenuBar extends JMenuBar {
         open.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
+                String[] options = {"Yes", "No", "Cancel"};
+                if (editor.getChanged()) {
+                    int response = JOptionPane.showOptionDialog(editor, "Would you like to save the current file?",
+                            "Save?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            options, options[2]);
+                    if (response == JOptionPane.YES_OPTION)
+                        saveFileAs();
+                    if (response == JOptionPane.CANCEL_OPTION)
+                        return;
+                }
                 File selectedFile = null;
                 if (fc.showOpenDialog(editor)==JFileChooser.APPROVE_OPTION) {
                     selectedFile = fc.getSelectedFile();
@@ -100,14 +112,13 @@ public class MenuBar extends JMenuBar {
             @Override
             public void actionPerformed(ActionEvent e){
                 String[] options = {"Yes", "No", "Cancel"};
-                if (editor.getChanged()){
+                if (editor.getChanged()) {
                     int response = JOptionPane.showOptionDialog(editor, "Would you like to save the current file?",
                             "Save?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                             options, options[2]);
-                    if(response == 0){
+                    if (response == JOptionPane.YES_OPTION)
                         saveFileAs();
-                    }
-                    if(response==2)
+                    if (response == JOptionPane.CANCEL_OPTION)
                         return;
                 }
                 editor.dispose();
@@ -131,12 +142,28 @@ public class MenuBar extends JMenuBar {
         }
     }
 
+    /**
+    private void readFile(File file){
+        try(BufferedReader input = new BufferedReader(new FileReader(file))){
+            kit.read(input, editor.getTextPane().getStyledDocument(), 0);
+            editor.addNewDocumentListener();
+            editor.setFileName(file.getName());
+            editor.setChanged(false);
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(this.editor, "Unable to find " + file.getName());
+        }
+        catch(BadLocationException ble){
+
+        }
+    }
+     **/
+
     private void saveFile(File thisFile){
         String fileName = thisFile.getAbsolutePath();
         if (!fileName.endsWith(".txt")){
             fileName += ".txt";
         }
-
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
             editor.getTextPane().write(writer);
             editor.setFileName(thisFile.getName());
@@ -146,6 +173,28 @@ public class MenuBar extends JMenuBar {
             JOptionPane.showMessageDialog(this.editor, "Unable to save the file");
         }
     }
+
+    /**
+    private void saveFile(File thisFile) {
+        String fileName = thisFile.getAbsolutePath();
+        if (!fileName.endsWith(".rtf"))
+            fileName += ".rtf";
+
+        StyledDocument doc = editor.getTextPane().getStyledDocument();
+        EditorKit kit = editor.getTextPane().getEditorKit();
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
+            kit.write(writer, doc, doc.getStartPosition().getOffset(), doc.getLength());
+
+            editor.setChanged(false);
+        }
+        catch(IOException ioe) {
+        }
+        catch(BadLocationException ble){
+
+        }
+    }
+     **/
 
     private void saveFileAs(){
         if(fc.showSaveDialog(this.editor) == JFileChooser.APPROVE_OPTION)

@@ -11,23 +11,16 @@ public class ToolBar extends JToolBar {
 
     public ToolBar(TextEditorGUI editor){
         this.editor = editor;
-        createFontsPanel();
+        createFontsMenu();
+        createFontSizeMenu();
+        addSeparator();
         createFontStyleMenu();
+        addSeparator();
         createAlignmentMenu();
     }
 
-    private void createFontsPanel(){
-        JPanel fontPanel = new JPanel();
-        fontPanel.add(createFontsMenu());
-        fontPanel.add(createFontSizeMenu());
-        fontPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Font"),
-                BorderFactory.createEmptyBorder(0,0,0,0)));
-        add(fontPanel);
-    }
-
     // somehow fontList.setSelectedItem() is not working.
-    private JComboBox<Font> createFontsMenu(){
+    private void createFontsMenu(){
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         JComboBox<Font> fontList = new JComboBox<>(fonts);
         fontList.setRenderer(new FontListRenderer());
@@ -42,11 +35,11 @@ public class ToolBar extends JToolBar {
                 }
             }
         });
-        return fontList;
+        add(fontList);
     }
 
     // Find out why editor.getTextPane().setFont(currentFont.deriveFont()) is not working as it should
-    private JSpinner createFontSizeMenu(){
+    private void createFontSizeMenu(){
         SpinnerModel fontSize = new SpinnerNumberModel(15, 0, 50, 1);
         JSpinner fontSizeSpinner = new JSpinner(fontSize);
         fontSizeSpinner.addChangeListener(new ChangeListener() {
@@ -57,52 +50,32 @@ public class ToolBar extends JToolBar {
                         (int)fontSizeSpinner.getValue()));
             }
         });
-        return fontSizeSpinner;
+        add(fontSizeSpinner);
     }
 
     private void createFontStyleMenu(){
         Action bold = new StyledEditorKit.BoldAction();
         bold.putValue(Action.NAME, "Bold");
-        JButton boldButton = new JButton(bold);
+        add(bold);
 
         Action italic = new StyledEditorKit.ItalicAction();
         italic.putValue(Action.NAME, "Italic");
-        JButton italicButton = new JButton(italic);
+        add(italic);
 
         Action underline = new StyledEditorKit.UnderlineAction();
         underline.putValue(Action.NAME, "Underline");
-        JButton underlineButton = new JButton(underline);
-
-        JPanel stylePanel = new JPanel();
-        stylePanel.add(boldButton);
-        stylePanel.add(italicButton);
-        stylePanel.add(underlineButton);
-        stylePanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Font Style"),
-                BorderFactory.createEmptyBorder(5,5,5,5)));
-        add(stylePanel);
-
+        add(underline);
     }
 
     private void createAlignmentMenu(){
         Action left = new StyledEditorKit.AlignmentAction("Left", StyleConstants.ALIGN_LEFT);
-        JButton leftButton = new JButton(left);
+        add(left);
 
         Action center = new StyledEditorKit.AlignmentAction("Center", StyleConstants.ALIGN_CENTER);
-        JButton centerButton = new JButton(center);
+        add(center);
 
-        Action right = new StyledEditorKit.AlignmentAction("Right", StyleConstants.ALIGN_RIGHT);
-        JButton rightButton = new JButton(right);
-
-
-        JPanel alignPanel = new JPanel();
-        alignPanel.add(leftButton);
-        alignPanel.add(centerButton);
-        alignPanel.add(rightButton);
-        alignPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createTitledBorder("Alignment"),
-                BorderFactory.createEmptyBorder(5,5,5,5)));
-        add(alignPanel);
+        Action Right = new StyledEditorKit.AlignmentAction("Right", StyleConstants.ALIGN_RIGHT);
+        add(Right);
     }
 
     private class FontListRenderer extends DefaultListCellRenderer{

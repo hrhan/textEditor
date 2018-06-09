@@ -2,7 +2,11 @@ import com.sun.glass.events.KeyEvent;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.StyleContext;
+import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -129,22 +133,42 @@ public class MenuBar extends JMenuBar {
         return quit;
     }
 
+
     // Somehow get the save? message when quit menu is selected right after opening a file. Needs to be fixed.
-    private void readFile(File file){
-        try(BufferedReader input = new BufferedReader(new FileReader(file))){
-            editor.getTextPane().read(input, null);
+    private void readFile(File file) {
+        try (BufferedReader input = new BufferedReader(new FileReader(file))) {
+            //editor.getTextPane().read(input, null);
+            //editor.getTextPane().setContentType("text/rtf");
+            String fileName = file.getName();
+            if(fileName.endsWith(".txt")){
+                editor.getTextPane().read(input, null);
+            }
+            else if(fileName.endsWith(".rtf")){
+                RTFEditorKit kit = new RTFEditorKit();
+                editor.getTextPane().setEditorKit(kit);
+                DefaultStyledDocument styledDoc = new DefaultStyledDocument(new StyleContext());
+                kit.read(input, styledDoc, 0);
+                editor.getTextPane().setDocument(styledDoc);
+            }
+            //DefaultStyledDocument styledDoc = new DefaultStyledDocument(new StyleContext());
+            //editor.getKit().read(input, styledDoc, 0);
+            //editor.getTextPane().setDocument(styledDoc);
             editor.addNewDocumentListener();
-            editor.setFileName(file.getName());
+            editor.setFileName(fileName);
             editor.setChanged(false);
-        }
-        catch(IOException ioe){
+        } catch (IOException ioe) {
             JOptionPane.showMessageDialog(this.editor, "Unable to find " + file.getName());
+        } catch (BadLocationException ble) {
+
         }
     }
 
-    /**
+
+/**
     private void readFile(File file){
-        try(BufferedReader input = new BufferedReader(new FileReader(file))){
+        RTFEditorKit kit = new RTFEditorKit();
+        try(BufferedInputStream input = new BufferedInputStream(new FileInputStream(file))){
+            editor.getTextPane().setEditorKit(kit);
             kit.read(input, editor.getTextPane().getStyledDocument(), 0);
             editor.addNewDocumentListener();
             editor.setFileName(file.getName());
@@ -157,7 +181,8 @@ public class MenuBar extends JMenuBar {
 
         }
     }
-     **/
+ **/
+
 
     private void saveFile(File thisFile){
         String fileName = thisFile.getAbsolutePath();

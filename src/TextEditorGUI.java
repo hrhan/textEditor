@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -13,6 +14,7 @@ public class TextEditorGUI extends JFrame{
     private boolean changed = false;
     private JMenuBar menuBar = new MenuBar(this);
     private JToolBar toolBar = new ToolBar(this);
+    private RTFEditorKit kit = new RTFEditorKit();
 
     public TextEditorGUI(){
         setTitle(this.fileName);
@@ -23,6 +25,7 @@ public class TextEditorGUI extends JFrame{
         setJMenuBar(menuBar);
         getContentPane().add(toolBar, BorderLayout.NORTH);
         addNewDocumentListener();
+        //textPane.setEditorKit(kit);
 
         WindowListener exitListner = new WindowAdapter() {
             @Override
@@ -44,6 +47,8 @@ public class TextEditorGUI extends JFrame{
     public JTextPane getTextPane(){
         return this.textPane;
     }
+
+    public RTFEditorKit getKit(){return this.kit;}
 
     public String getFileName(){
         return this.fileName;

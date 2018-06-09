@@ -2,10 +2,7 @@ import com.sun.glass.events.KeyEvent;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.StyleContext;
+import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -137,29 +134,21 @@ public class MenuBar extends JMenuBar {
     // Somehow get the save? message when quit menu is selected right after opening a file. Needs to be fixed.
     private void readFile(File file) {
         try (BufferedReader input = new BufferedReader(new FileReader(file))) {
-            //editor.getTextPane().read(input, null);
-            //editor.getTextPane().setContentType("text/rtf");
             String fileName = file.getName();
-            if(fileName.endsWith(".txt")){
-                editor.getTextPane().read(input, null);
+            StyledEditorKit kit;
+            if(fileName.endsWith(".rtf")){
+                kit = new RTFEditorKit();
             }
-            else if(fileName.endsWith(".rtf")){
-                RTFEditorKit kit = new RTFEditorKit();
-                editor.getTextPane().setEditorKit(kit);
-                DefaultStyledDocument styledDoc = new DefaultStyledDocument(new StyleContext());
-                kit.read(input, styledDoc, 0);
-                editor.getTextPane().setDocument(styledDoc);
+            else{
+                kit = new StyledEditorKit();
             }
-            //DefaultStyledDocument styledDoc = new DefaultStyledDocument(new StyleContext());
-            //editor.getKit().read(input, styledDoc, 0);
-            //editor.getTextPane().setDocument(styledDoc);
+            editor.getTextPane().setEditorKit(kit);
+            editor.getTextPane().read(input, null);
             editor.addNewDocumentListener();
             editor.setFileName(fileName);
             editor.setChanged(false);
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(this.editor, "Unable to find " + file.getName());
-        } catch (BadLocationException ble) {
-
         }
     }
 
